@@ -6,7 +6,7 @@ __version__ = "$Revision$ $Date$"
 from distutils.core import setup
 
 setup(
-    name='pf-xivo-confgen',
+    name='xivo-confgen',
     version='0.1',
     description='XIVO Configurations Generator',
     author='Guillaume Bour',
