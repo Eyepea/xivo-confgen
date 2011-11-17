@@ -120,7 +120,7 @@ if o['frontends'] is None:
 else:
 	o['frontends'] = o['frontends'].split(',')
 	for f in o['frontends']:
-		if not hasattr(frontends, f):
+		if f not in frontends:
 			raise Exception("Unknown *%s* frontend" % f)
 
 if o['listen'] == '*':
