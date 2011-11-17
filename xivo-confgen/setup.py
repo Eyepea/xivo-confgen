@@ -18,7 +18,7 @@ setup(
      
     packages=['xivo_confgen', 'xivo_confgen.frontends', 'xivo_confgen.backends'],
     package_dir={'xivo_confgen': 'xivo_confgen'},
-    scripts=['bin/confgen', 'bin/confgend'],
-    data_files=[('/etc/pf-xivo', ['etc/confgen.conf', 'etc/confgend.conf']),
-                ('/etc/pf-xivo/confgend/asterisk', ['etc/asterisk/contexts.conf'])],
+    scripts=['bin/xivo-confgen', 'bin/xivo-confgend'],
+    data_files=[('/etc/pf-xivo', ['etc/xivo-confgen.conf', 'etc/xivo-confgend.conf']),
+                ('/etc/pf-xivo/xivo-confgend/asterisk', ['etc/asterisk/contexts.conf'])],
 )
