@@ -41,7 +41,7 @@ class Options(usage.Options):
 			['port'   , 'p', 5035       , 'confgend server port', int],
 			['timeout', 't', 5          , 'connexion timeout', int],
 			# configuration file
-			['conf'   , 'c', '/etc/pf-xivo/confgen.conf', 'Configuration file', str],
+			['conf'   , 'c', '/etc/pf-xivo/xivo-confgen.conf', 'Configuration file', str],
 	]
 
 	def parseArgs(self, confkey):
