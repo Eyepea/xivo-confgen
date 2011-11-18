@@ -65,9 +65,9 @@ class Options(usage.Options):
         ['port'     , 'p', 5035, 'confgend server port'      , int],
         ['backend'  , 'b', None, 'backend data provider'     , str],
         ['frontends', 'f', None, 'frontend data generators (comma separated)', str],
-        ['cache'    , 'a', '/var/lib/confgend', 'config cache', str],
+        ['cache'    , 'a', '/var/lib/xivo-confgend', 'config cache', str],
             # configuration file
-        ['conf'     , 'c', '/etc/pf-xivo/confgend.conf', 'Configuration file', str],
+        ['conf'     , 'c', '/etc/pf-xivo/xivo-confgend.conf', 'Configuration file', str],
     ]
 
 
