@@ -120,7 +120,7 @@ class SpecializedHandler(object):
 
 class AgentUsersHandler(SpecializedHandler):
     def all(self, commented=None, order=None, **kwargs):
-        (_a, _f) = [getattr(self.db, o)._table for o in	('staticagent', 'agentfeatures')]
+        (_a, _f) = [getattr(self.db, options)._table for options in	('staticagent', 'agentfeatures')]
         q = select(
             [_a.c.var_val, _f.c.autologoff, _f.c.ackcall, _f.c.acceptdtmf, _f.c.enddtmf,
                 _f.c.wrapuptime, _f.c.musiconhold],
@@ -140,7 +140,7 @@ class UserQueueskillsHandler(SpecializedHandler):
         """
         NOTE: we generate the same queueskills for each line of the user
         """
-        (_u, _s, _l) = [getattr(self.db, o)._table.c for o in ('userqueueskill',
+        (_u, _s, _l) = [getattr(self.db, options)._table.c for options in ('userqueueskill',
             'queueskill', 'linefeatures')]
 
         q = select(
@@ -154,7 +154,7 @@ class UserQueueskillsHandler(SpecializedHandler):
 
 class AgentQueueskillsHandler(SpecializedHandler):
     def all(self, *args, **kwargs):
-        (_a, _f, _s) = [getattr(self.db, o)._table for o in ('agentqueueskill', 	'agentfeatures', 'queueskill')]
+        (_a, _f, _s) = [getattr(self.db, options)._table for options in ('agentqueueskill', 	'agentfeatures', 'queueskill')]
         q = select(
             [_f.c.id, _s.c.name, _a.c.weight],
             and_(_a.c.agentid == _f.c.id, _a.c.skillid == _s.c.id)
@@ -167,7 +167,7 @@ class AgentQueueskillsHandler(SpecializedHandler):
 class ExtenumbersHandler(SpecializedHandler):
     def all(self, features=[], *args, **kwargs):
         #NOTE: sqlalchemy 4: table, 5: _table
-        (_n, _e) = [getattr(self.db, o)._table for o in ('extenumbers', 'extensions')]
+        (_n, _e) = [getattr(self.db, options)._table for options in ('extenumbers', 'extensions')]
         q = select(
             [_n.c.typeval, _n.c.exten, _e.c.commented],
             and_(_n.c.typeval == _e.c.name, _e.c.context == 'xivo-features', _n.c.type == 'extenfeatures',
@@ -180,7 +180,7 @@ class ExtenumbersHandler(SpecializedHandler):
 class HintsHandler(SpecializedHandler):
     def all(self, *args, **kwargs):
         # get users with hint
-        (_u, _v, _l) = [getattr(self.db, o)._table for o in
+        (_u, _v, _l) = [getattr(self.db, options)._table for options in
                 ('userfeatures', 'voicemail', 'linefeatures')]
 
         conds = [_u.c.id == _l.c.iduserfeatures, _l.c.internal == 0, _u.c.enablehint == 1]
@@ -202,7 +202,7 @@ class HintsHandler(SpecializedHandler):
 class PhonefunckeysHandler(SpecializedHandler):
     def all(self, *args, **kwargs):
         # get all supervised user/group/queue/meetme
-        (_u, _p, _e, _l) = [getattr(self.db, o)._table for o in
+        (_u, _p, _e, _l) = [getattr(self.db, options)._table for options in
                 ('userfeatures', 'phonefunckey', 'extenumbers', 'linefeatures')]
         conds = [
             _l.c.iduserfeatures == _p.c.iduserfeatures,
@@ -229,7 +229,7 @@ class PhonefunckeysHandler(SpecializedHandler):
 class BSFilterHintsHandler(SpecializedHandler):
     def all(self, *args, **kwargs):
         # get all supervised bsfilters
-        (_u, _p, _e, _l) = [getattr(self.db, o)._table for o in
+        (_u, _p, _e, _l) = [getattr(self.db, options)._table for options in
                 ('userfeatures', 'phonefunckey', 'extenumbers', 'linefeatures')]
 
         _l2 = alias(_l)
@@ -255,7 +255,7 @@ class BSFilterHintsHandler(SpecializedHandler):
 
 class ProgfunckeysHintsHandler(SpecializedHandler):
     def all(self, *args, **kwargs):
-        (_u, _p, _e, _l) = [getattr(self.db, o)._table for o in
+        (_u, _p, _e, _l) = [getattr(self.db, options)._table for options in
                 ('userfeatures', 'phonefunckey', 'extenumbers', 'linefeatures')]
 
         conds = [
@@ -318,7 +318,7 @@ class PickupsHandler(SpecializedHandler):
         if usertype not in ('sip', 'iax'):
             raise TypeError
 
-        (_p, _pm, _lf, _u, _g, _q, _qm) = [getattr(self.db, o)._table.c for o in
+        (_p, _pm, _lf, _u, _g, _q, _qm) = [getattr(self.db, options)._table.c for options in
                 ('pickup', 'pickupmember', 'linefeatures', 'user' + usertype, 'groupfeatures',
                 'queuefeatures', 'queuemember')]
 
@@ -374,7 +374,7 @@ class PickupsHandler(SpecializedHandler):
 
 class QueuePenaltiesHandler(SpecializedHandler):
     def all(self, **kwargs):
-        (_p, _pc) = [getattr(self.db, o)._table.c for o in ('queuepenalty', 'queuepenaltychange')]
+        (_p, _pc) = [getattr(self.db, options)._table.c for options in ('queuepenalty', 'queuepenaltychange')]
 
         q = select(
                 [_p.name, _pc.seconds, _pc.maxp_sign, _pc.maxp_value, _pc.minp_sign, _pc.minp_value],
@@ -388,7 +388,7 @@ class QueuePenaltiesHandler(SpecializedHandler):
 
 class TrunksHandler(SpecializedHandler):
     def all(self, **kwargs):
-        (_t, _s, _i) = [getattr(self.db, o)._table.c for o in ('trunkfeatures', 'usersip', 'useriax')]
+        (_t, _s, _i) = [getattr(self.db, options)._table.c for options in ('trunkfeatures', 'usersip', 'useriax')]
 
         q1 = select([_t.id, _t.protocol, _s.username, _s.secret, _s.host],
             and_(
