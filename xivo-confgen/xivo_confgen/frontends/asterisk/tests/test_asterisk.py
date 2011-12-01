@@ -15,7 +15,7 @@ class Test(unittest.TestCase):
 
     def test_encoding(self):
         charset = ("ascii", "US-ASCII",)
-        self.assertTrue(sys.getdefaultencoding() in charset, "Test should be run in ascii")
+        self.assertTrue(sys.getdefaultencoding() in charset, "Test should be run in ascii, in eclipse change run configuration common tab")
 
     def test_get_line(self):
         result = self.asteriskFrontEnd._gen_value_line('emailbody', 'pépè')
