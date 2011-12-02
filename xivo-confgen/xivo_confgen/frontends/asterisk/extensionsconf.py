@@ -1,13 +1,42 @@
-import StringIO
+# -*- coding: UTF-8 -*-
+
+__license__ = """
+    Copyright (C) 2011  Avencall
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA..
+"""
+
+import re
+from StringIO import StringIO
 from xivo import OrderedConf, xivo_helpers
 
 
 class ExtensionsConf(object):
+    
+    def __init__(self,backend,contextsconf):
+        self.backend = backend
+        self.contextsconf = contextsconf
+        
+        
+    def generate(self,output):
+        self.extensions_conf(output)
 
-    def extensions_conf(self):
+    def extensions_conf(self,output):
             """Generate extensions.conf asterisk configuration file
             """
-            options = StringIO()
+            options = output
             conf = None
     
             # load context templates
@@ -207,3 +236,22 @@ class ExtensionsConf(object):
             print >> options, "exten = " + "\nexten = ".join(cfeatures)
 
         return options.getvalue()
+
+
+    def gen_dialplan_from_template(self, template, exten):
+        output = StringIO()
+        for line in template:
+            prefix = 'exten =' if line.startswith('%%EXTEN%%') else 'same  =    '
+            def varset(matchObject):
+                return str(exten.get(matchObject.group(1).lower(), ''))
+            line = re.sub('%%([^%]+)%%', varset, line)
+            print >> output, prefix, line
+        return output.getvalue()
+    
+    
+    @classmethod
+    def new_from_backend(cls, backend,contextconfs):
+        return cls(backend,contextconfs)
+    
+    
+    

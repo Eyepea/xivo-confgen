@@ -37,12 +37,6 @@ class Test(unittest.TestCase):
         self.assertEqual(u'pépè', self.asteriskFrontEnd._get_is_not_none(d, 'two'))
         self.assertEqual(u'', self.asteriskFrontEnd._get_is_not_none(d, 'three'))
 
-    def test_generate_dialplan_from_template(self):
-        template = ["%%EXTEN%%,%%PRIORITY%%,Set('XIVO_BASE_CONTEXT': ${CONTEXT})"]
-        exten = {'exten':'*98', 'priority':1}
-        result = self.asteriskFrontEnd.gen_dialplan_from_template(template, exten)
-
-        self.assertEqual(result, "exten = *98,1,Set('XIVO_BASE_CONTEXT': ${CONTEXT})\n")
 
     def test_gen_sip_general(self):
         staticsip = [{'filename': u'sip.conf', 'category': u'general', 'var_name': u'autocreate_prefix', 'var_val': u'apv6Ym3fJW'},
