@@ -25,17 +25,19 @@ from xivo import OrderedConf, xivo_helpers
 
 class ExtensionsConf(object):
     
-    def __init__(self,backend,contextsconf):
+    def __init__(self, backend, contextsconf):
         self.backend = backend
         self.contextsconf = contextsconf
         
         
-    def generate(self,output):
+    def generate(self, output):
         self.extensions_conf(output)
 
-    def extensions_conf(self,output):
+    def extensions_conf(self, output):
             """Generate extensions.conf asterisk configuration file
             """
+            self.generate_voice_menus(self.backend.voicemenus.all(commented=0, order='name'), output)
+
             options = output
             conf = None
     
@@ -63,14 +65,7 @@ class ExtensionsConf(object):
             extenumbers = self.backend.extenumbers.all(features=xfeatures.keys())
             xfeatures.update(dict([x['typeval'], {'exten': x['exten'], 'commented': x['commented']}] for x in extenumbers))
     
-            # voicemenus
-            for vm_context in self.backend.voicemenus.all(commented=0, order='name'):
-                print >> options, "[voicemenu-%s]" % vm_context['name']
-    
-                for act in self.backend.extensions.all(context='voicemenu-' + vm_context['name'], commented=0):
-                    print >> options, "exten = %s,%s,%s(%s)" % \
-                            (act['exten'], act['priority'], act['app'], act['appdata'].replace('|', ','))
-    
+                
             # foreach active context
             for ctx in self.backend.contexts.all(commented=False, order='name', asc=False):
                 # context name preceded with '!' is ignored
@@ -114,7 +109,7 @@ class ExtensionsConf(object):
                         appdata = (appdata[0], 's', '1(' + ','.join(appdata[1:]) + ')')
     
                     exten['action'] = "%s(%s)" % (app, ','.join(appdata))
-                    print >> options, self.gen_dialplan_from_template(tmpl, exten)
+                    self.gen_dialplan_from_template(tmpl, exten, options)
     
                 # phone (user) hints
                 hints = self.backend.hints.all(context=ctx['name'])
@@ -220,7 +215,7 @@ class ExtensionsConf(object):
             app = exten['app']
             appdata = list(exten['appdata'].replace('|', ',').split(','))
             exten['action'] = "%s(%s)" % (app, ','.join(appdata))
-            print >> options, self.gen_dialplan_from_template(tmpl, exten)
+            self.gen_dialplan_from_template(tmpl, exten, options)
 
         for x in ('busy', 'rna', 'unc'):
             fwdtype = "fwd%s" % x
@@ -238,20 +233,27 @@ class ExtensionsConf(object):
         return options.getvalue()
 
 
-    def gen_dialplan_from_template(self, template, exten):
-        output = StringIO()
+    def gen_dialplan_from_template(self, template, exten, output):
         for line in template:
             prefix = 'exten =' if line.startswith('%%EXTEN%%') else 'same  =    '
             def varset(matchObject):
                 return str(exten.get(matchObject.group(1).lower(), ''))
             line = re.sub('%%([^%]+)%%', varset, line)
             print >> output, prefix, line
-        return output.getvalue()
+        print >> output
     
+    def generate_voice_menus(self,voicemenus,output):
+        for vm_context in voicemenus:
+            print >> output, "[voicemenu-%s]" % vm_context['name']
+            for act in self.backend.extensions.all(context='voicemenu-' + vm_context['name'], commented=0):
+                print >> output, "exten = %s,%s,%s(%s)" % \
+                            (act['exten'], act['priority'], act['app'], act['appdata'].replace('|', ','))
+            print >> output
+            
     
     @classmethod
-    def new_from_backend(cls, backend,contextconfs):
-        return cls(backend,contextconfs)
+    def new_from_backend(cls, backend, contextconfs):
+        return cls(backend, contextconfs)
     
     
     
