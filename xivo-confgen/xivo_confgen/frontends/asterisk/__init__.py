@@ -26,9 +26,16 @@ from xivo             import xivo_helpers
 from StringIO        import StringIO
 from xivo_confgen.frontend import Frontend
 from xivo_confgen.frontends.asterisk.voicemail import VoicemailConf
+from xivo_confgen.frontends.asterisk.sccp import SccpConf
 
 
 class AsteriskFrontend(Frontend):
+    def sccp_conf(self):
+        output = StringIO()
+        sccp_conf = SccpConf.new_from_backend(self.backend)
+        sccp_conf.generate(output)
+        return output.getvalue()
+
     def sip_conf(self):
         """
             output - output stream. write to it with *print >>output, 'blablabla'*

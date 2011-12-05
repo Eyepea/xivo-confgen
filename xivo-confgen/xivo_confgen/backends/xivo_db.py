@@ -409,6 +409,9 @@ class TrunksHandler(SpecializedHandler):
 
 class QObject(object):
     _translation = {
+        'sccpgeneral'   : ('sccpgeneral',),
+        'sccpline'      : ('sccpline',),
+        'sccpdevice'    : ('sccpdevice',),
         'sip'           : ('staticsip',),
         'iax'           : ('staticiax',),
         'voicemail'     : ('staticvoicemail',),
