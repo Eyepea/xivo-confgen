@@ -127,7 +127,8 @@ class TestSccpConf(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_new_from_backend(self):
-
         backend = mock.Mock()
         SccpConf.new_from_backend(backend)
-        backend.sccp.all.assert_called_once_with()
+        backend.sccpgeneral.all.assert_called_once_with()
+        backend.sccpline.all.assert_called_once_with()
+        backend.sccpdevice.all.assert_called_once_with()
