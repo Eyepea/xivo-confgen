@@ -1,5 +1,5 @@
 # -*- coding: utf8 -*-
-__version__ = "$Revision$ $Date$"
+
 __author__ = "Guillaume Bour <gbour@proformatique.com>"
 __license__ = """
     Copyright (C) 2010-2011  Avencall
