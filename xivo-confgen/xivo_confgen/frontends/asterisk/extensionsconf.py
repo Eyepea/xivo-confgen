@@ -125,17 +125,28 @@ class ExtensionsConf(object):
                         proto = 'IAX2'
     
                     if number:
-                        print >> options, "exten = %s,hint,%s/%s" % (number, proto, name)
+                        if proto == 'CUSTOM':
+                            print >> options, "exten = %s,hint,%s" % (number, name)
+                        else:
+                            print >> options, "exten = %s,hint,%s/%s" % (number, proto, name)
     
                     if not xfeatures['calluser'].get('commented', 1):
                         #TODO: fkey_extension need to be reviewed (see hexanol)
-                        print >> options, "exten = %s,hint,%s/%s" % (xivo_helpers.fkey_extension(
-                            xfeatures['calluser']['exten'], (xid,)),
-                            proto, name)
+                        if proto == 'CUSTOM':
+                            print >> options, "exten = %s,hint,%s" % (xivo_helpers.fkey_extension(
+                                xfeatures['calluser']['exten'], (xid,)),
+                                name)
+                        else:
+                            print >> options, "exten = %s,hint,%s/%s" % (xivo_helpers.fkey_extension(
+                                xfeatures['calluser']['exten'], (xid,)),
+                                proto, name)
     
                     if not xfeatures['vmusermsg'].get('commented', 1) and int(hint['enablevoicemail']) \
                          and hint['uniqueid']:
-                        print >> options, "exten = %s%s,hint,%s/%s" % (xfeatures['vmusermsg']['exten'], number, proto, name)
+                        if proto == 'CUSTOM':
+                            print >> options, "exten = %s%s,hint,%s" % (xfeatures['vmusermsg']['exten'], number, name)
+                        else:
+                            print >> options, "exten = %s%s,hint,%s/%s" % (xfeatures['vmusermsg']['exten'], number, proto, name)
     
     
                 # objects(user,group,...) supervision
