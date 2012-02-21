@@ -21,7 +21,6 @@ __license__ = """
 import unittest
 import sys
 
-from xivo_confgen.frontends.asterisk.util import *
 from xivo_confgen.frontends.asterisk import AsteriskFrontend
 
 
@@ -35,35 +34,6 @@ class Test(unittest.TestCase):
     def test_encoding(self):
         charset = ("ascii", "US-ASCII",)
         self.assertTrue(sys.getdefaultencoding() in charset, "Test should be run in ascii, in eclipse change run configuration common tab")
-
-    def test_get_line(self):
-        result = gen_value_line('emailbody', 'pépè')
-        self.assertEqual(result, u'emailbody = pépè')
-
-    def test_unicodify_string(self):
-            self.assertEqual(u'pépé', unicodify_string(u'pépé'))
-            self.assertEqual(u'pépé', unicodify_string(u'pépé'.encode('utf8')))
-            self.assertEqual(u'pépé', unicodify_string('pépé'))
-            self.assertEqual(u'8', unicodify_string(8))
-
-    def test_get_not_none(self):
-        d = {'one': u'pépè',
-             'two': u'pépè'.encode('utf8'),
-             'three': None}
-        self.assertEqual(u'pépè', get_is_not_none(d, 'one'))
-        self.assertEqual(u'pépè', get_is_not_none(d, 'two'))
-        self.assertEqual(u'', get_is_not_none(d, 'three'))
-
-    def test_gen_queues(self):
-        """
-        [general]
-        shared_lastcall = no
-        updatecdr = no
-        monitor-type = no
-        autofill = no
-        persistentmembers = yes
-        """
-        pass
 
     def test_gen_iax_trunk(self):
         trunk = {'id': 1, 'name': u'xivo_devel_51', 'type': u'friend', 'username': u'xivo_devel_51',
@@ -144,4 +114,3 @@ class Test(unittest.TestCase):
         self.assertTrue(u'trunk = 0' in result)
         self.assertTrue(u'host = dynamic' in result)
         self.assertTrue(u'qualifyfreqok = 60000' in result)
-

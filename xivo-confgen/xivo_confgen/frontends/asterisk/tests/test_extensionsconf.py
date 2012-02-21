@@ -26,7 +26,6 @@ from mock import Mock
 
 class TestExtensionsConf(unittest.TestCase):
 
-
     def assertConfigEqual(self, configExpected, configResult):
         self.assertEqual(configExpected.replace(' ', ''), configResult.replace(' ', ''))
 
@@ -43,7 +42,6 @@ class TestExtensionsConf(unittest.TestCase):
         self.extensionsconf.gen_dialplan_from_template(template, exten, output)
 
         self.assertEqual(output.getvalue(), "exten = *98,1,Set('XIVO_BASE_CONTEXT': ${CONTEXT})\n\n")
-
 
     def test_generate_voice_menus(self):
         output = StringIO()
@@ -67,7 +65,3 @@ class TestExtensionsConf(unittest.TestCase):
                                         exten=2300,1,GoSub(endcall,s,1(hangup))
                                         
                                         """, output.getvalue())
-
-if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()

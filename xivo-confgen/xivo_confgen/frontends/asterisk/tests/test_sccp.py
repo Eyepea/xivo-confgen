@@ -2,7 +2,6 @@
 
 __license__ = """
     Copyright (C) 2011  Avencall
-    Author: Nicolas Bouliane <nbouliane@avencall.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,8 +22,9 @@ import os
 import StringIO
 import unittest
 import mock
-from xivo_confgen.frontends.asterisk.sccp import SccpConf, SccpGeneralConf, SccpLineConf, SccpDeviceConf
+from xivo_confgen.frontends.asterisk.sccp import SccpConf, _SccpGeneralConf, _SccpLineConf, _SccpDeviceConf
 from xivo_confgen.frontends.asterisk.tests.util import parse_ast_config
+
 
 class TestSccpConf(unittest.TestCase):
     def setUp(self):
@@ -51,7 +51,7 @@ class TestSccpConf(unittest.TestCase):
                         'option_name': u'foo',
                         'value': u'bar'}]
 
-        sccp_conf = SccpGeneralConf()
+        sccp_conf = _SccpGeneralConf()
         sccp_conf.generate(sccpgeneral, self._output)
 
         expected = """\
@@ -67,7 +67,7 @@ class TestSccpConf(unittest.TestCase):
                      'cid_name': u'jimmy',
                      'cid_num': u'100'}]
 
-        sccp_conf = SccpLineConf()
+        sccp_conf = _SccpLineConf()
         sccp_conf.generate(sccpline, self._output)
 
 
@@ -87,7 +87,7 @@ class TestSccpConf(unittest.TestCase):
                        'device': u'SEPACA016FDF235',
                        'line': u'103'}]
 
-        sccp_conf = SccpDeviceConf()
+        sccp_conf = _SccpDeviceConf()
         sccp_conf.generate(sccpdevice, self._output)
 
         expected = """\

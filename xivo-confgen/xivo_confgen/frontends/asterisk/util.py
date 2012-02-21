@@ -18,24 +18,6 @@ __license__ = """
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA..
 """
 
-def gen_value_line(key, value):
-    return u'%s = %s' % (key, unicodify_string(value))
-
-
-def get_is_not_none(data, key):
-    if key in data:
-        value = data[key]
-        return '' if value is None else unicodify_string(value)
-    else:
-        return ''
-
-
-def unicodify_string(str):
-    try:
-        return unicode(str)
-    except UnicodeDecodeError:
-        return unicode(str.decode('utf8'))
-
 
 def format_ast_section(name):
     return u'[%s]' % name

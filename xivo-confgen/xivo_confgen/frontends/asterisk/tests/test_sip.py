@@ -18,14 +18,10 @@ __license__ = """
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA..
 """
 
-
-import os
 import unittest
-import mock
 from StringIO import StringIO
 
-from xivo_confgen.frontends.asterisk.sip import SipConf
-from xivo_confgen.frontends.asterisk.tests.util import *
+from xivo_confgen.frontends.asterisk.sip import SipConf, gen_value_line, unicodify_string
 
 
 class TestSipConf(unittest.TestCase):
@@ -34,6 +30,16 @@ class TestSipConf(unittest.TestCase):
 
     def tearDown(self):
         pass
+
+    def test_get_line(self):
+        result = gen_value_line('emailbody', 'pépè')
+        self.assertEqual(result, u'emailbody = pépè')
+
+    def test_unicodify_string(self):
+        self.assertEqual(u'pépé', unicodify_string(u'pépé'))
+        self.assertEqual(u'pépé', unicodify_string(u'pépé'.encode('utf8')))
+        self.assertEqual(u'pépé', unicodify_string('pépé'))
+        self.assertEqual(u'8', unicodify_string(8))
 
     def test_gen_general(self):
         staticsip = [{'filename': u'sip.conf', 'category': u'general', 'var_name': u'autocreate_prefix', 'var_val': u'apv6Ym3fJW'},

@@ -18,8 +18,6 @@ __license__ = """
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA..
 """
 
-from xivo_confgen.frontends.asterisk.util import *
-
 
 class SipConf(object):
     def __init__(self, general, authentication, trunk, pickups, user):
@@ -128,3 +126,14 @@ class SipConf(object):
         pickups = backend.pickups.all(usertype='sip')
         user = backend.sipusers.all(commented=False)
         return cls(general, authentication, trunk, pickups, user)
+
+
+def gen_value_line(key, value):
+    return u'%s = %s' % (key, unicodify_string(value))
+
+
+def unicodify_string(str):
+    try:
+        return unicode(str)
+    except UnicodeDecodeError:
+        return str.decode('utf8')
