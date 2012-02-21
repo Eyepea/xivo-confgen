@@ -1,7 +1,5 @@
 # -*- coding: utf8 -*-
-from xivo_confgen.frontends.asterisk.extensionsconf import ExtensionsConf
 
-__author__ = "Guillaume Bour <gbour@proformatique.com>"
 __license__ = """
     Copyright (C) 2010-2011  Avencall
 
@@ -19,44 +17,40 @@ __license__ = """
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA..
 """
+
 import re
 from xivo import OrderedConf
 from xivo import xivo_helpers
-from util import *
 
 from StringIO import StringIO
 from xivo_confgen.frontend import Frontend
 from xivo_confgen.frontends.asterisk.extensionsconf import ExtensionsConf
-from xivo_confgen.frontends.asterisk.voicemail import VoicemailConf
-from xivo_confgen.frontends.asterisk.sccp import SccpConf
 from xivo_confgen.frontends.asterisk.sip import SipConf
+from xivo_confgen.frontends.asterisk.sccp import SccpConf
+from xivo_confgen.frontends.asterisk.voicemail import VoicemailConf
 
 
 class AsteriskFrontend(Frontend):
     def sccp_conf(self):
+        config_generator = SccpConf.new_from_backend(self.backend)
+        return self._generate_conf_from_generator(config_generator)
+
+    def _generate_conf_from_generator(self, config_generator):
         output = StringIO()
-        sccp_conf = SccpConf.new_from_backend(self.backend)
-        sccp_conf.generate(output)
+        config_generator.generate(output)
         return output.getvalue()
 
     def sip_conf(self):
-        output = StringIO()
-        sip_conf = SipConf.new_from_backend(self.backend)
-        sip_conf.generate(output)
-        return output.getvalue()
+        config_generator = SipConf.new_from_backend(self.backend)
+        return self._generate_conf_from_generator(config_generator)
 
     def voicemail_conf(self):
-        # XXX there might be a bit too much boilerplate
-        output = StringIO()
-        voicemail_conf = VoicemailConf.new_from_backend(self.backend)
-        voicemail_conf.generate(output)
-        return output.getvalue()
+        config_generator = VoicemailConf.new_from_backend(self.backend)
+        return self._generate_conf_from_generator(config_generator)
 
     def extensions_conf(self):
-        output = StringIO()
-        extension_conf = ExtensionsConf.new_from_backend(self.backend,self.contextsconf)
-        extension_conf.generate(output)
-        return output.getvalue()
+        config_generator = ExtensionsConf.new_from_backend(self.backend, self.contextsconf)
+        return self._generate_conf_from_generator(config_generator)
 
     def iax_conf(self):
         output = StringIO()
