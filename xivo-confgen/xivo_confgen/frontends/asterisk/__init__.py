@@ -20,13 +20,16 @@ __license__ = """
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA..
 """
 import re
-from xivo             import OrderedConf
-from xivo             import xivo_helpers
+from xivo import OrderedConf
+from xivo import xivo_helpers
+from util import *
 
-from StringIO        import StringIO
+from StringIO import StringIO
 from xivo_confgen.frontend import Frontend
+from xivo_confgen.frontends.asterisk.extensionsconf import ExtensionsConf
 from xivo_confgen.frontends.asterisk.voicemail import VoicemailConf
 from xivo_confgen.frontends.asterisk.sccp import SccpConf
+from xivo_confgen.frontends.asterisk.sip import SipConf
 
 
 class AsteriskFrontend(Frontend):
@@ -37,130 +40,23 @@ class AsteriskFrontend(Frontend):
         return output.getvalue()
 
     def sip_conf(self):
-        """
-            output - output stream. write to it with *print >>output, 'blablabla'*
-        """
         output = StringIO()
-
-        ## section::general
-        data_sip_general = self.backend.sip.all(commented=False)
-        print >> output, self._gen_sip_general(data_sip_general)
-
-        ## section::authentication
-        data_sip_authentication = self.backend.sipauth.all()
-        print >> output, self._gen_sip_authentication(data_sip_authentication)
-
-        # section::trunks
-        for trunk in self.backend.siptrunks.all(commented=False):
-            print >> output, self._gen_sip_trunk(trunk)
-
-        # section::users (xivo lines)
-        pickups = {}
-        for p in self.backend.pickups.all(usertype='sip'):
-            user = pickups.setdefault(p[0], {})
-            user.setdefault(p[1], []).append(str(p[2]))
-
-        for user in self.backend.sipusers.all(commented=False):
-            print >> output, self.gen_sip_user(user, pickups)
+        sip_conf = SipConf.new_from_backend(self.backend)
+        sip_conf.generate(output)
         return output.getvalue()
 
-    def _gen_sip_general(self, data_sip_general):
+    def voicemail_conf(self):
+        # XXX there might be a bit too much boilerplate
         output = StringIO()
-        print >> output, '[general]'
-        for item in data_sip_general:
-            if item['var_val'] is None:
-                continue
-
-            if item['var_name'] in ('register', 'mwi'):
-                print >> output, item['var_name'], "=>", item['var_val']
-
-            elif item['var_name'] not in ['allow', 'disallow']:
-                print >> output, item['var_name'], "=", item['var_val']
-
-            elif item['var_name'] == 'allow':
-                print >> output, 'disallow = all'
-                for c in item['var_val'].split(','):
-                    print >> output, 'allow = %s' % c
+        voicemail_conf = VoicemailConf.new_from_backend(self.backend)
+        voicemail_conf.generate(output)
         return output.getvalue()
 
-    def _gen_sip_authentication(self, data_sip_authentication):
+    def extensions_conf(self):
         output = StringIO()
-        if len(data_sip_authentication) > 0:
-            print >> output, '\n[authentication]'
-            for auth in data_sip_authentication:
-                mode = '#' if auth['secretmode'] == 'md5' else ':'
-                print >> output, "auth = %s%s%s@%s" % (auth['user'], mode, auth['secret'], auth['realm'])
+        extension_conf = ExtensionsConf.new_from_backend(self.backend,self.contextsconf)
+        extension_conf.generate(output)
         return output.getvalue()
-
-    def _gen_sip_trunk(self, data_sip_trunk):
-        output = StringIO()
-        print >> output, "\n[%s]" % data_sip_trunk['name']
-
-        for k, v in data_sip_trunk.iteritems():
-            if k in ('id', 'name', 'protocol', 'category', 'commented', 'disallow') or v in (None, ''):
-                continue
-
-            if isinstance(v, unicode):
-                v = v.encode('utf8')
-
-            if v == 'allow':
-                print >> output, "disallow = all"
-                for c in v.split(','):
-                    print >> output, "allow = " + str(c)
-            else:
-                print >> output, k, '=', v
-        return output.getvalue()
-
-    def gen_sip_user(self, user, pickups):
-        sipUnusedValues = ('id', 'name', 'protocol',
-                       'category', 'commented', 'initialized',
-                       'disallow', 'regseconds', 'lastms',
-                       'name', 'fullcontact', 'ipaddr',)
-        output = StringIO()
-        print >> output, "\n[%s]" % user['name']
-
-        for key, value in user.iteritems():
-            if key in sipUnusedValues or value in (None, ''):
-                continue
-
-            if key not in ('allow', 'subscribemwi'):
-                print >> output, self._gen_value_line(key, value)
-
-            if key == 'allow' :
-                print >> output, self._gen_value_line('disallow', 'all')
-                for codec in value.split(','):
-                    print >> output, self._gen_value_line("allow", codec)
-
-            if key == 'subscribemwi' :
-                value = 'no' if value == 0 else 'yes'
-                print >> output, self._gen_value_line('subscribemwi', value)
-
-        if user['name'] in pickups:
-            p = pickups[user['name']]
-            #WARNING: 
-            # pickupgroup: trappable calls  (xivo members)
-            # callgroup  : can pickup calls (xivo pickups)
-            if 'member' in p:
-                print >> output, "pickupgroup = " + ','.join(frozenset(p['member']))
-            if 'pickup' in p:
-                print >> output, "callgroup = " + ','.join(frozenset(p['pickup']))
-        return output.getvalue()
-
-    def _gen_value_line(self, key, value):
-        return u'%s = %s' % (key, self._unicodify_string(value))
-
-    def _get_is_not_none(self, data, key):
-        if key in data:
-            value = data[key]
-            return '' if value is None else self._unicodify_string(value)
-        else:
-            return ''
-
-    def _unicodify_string(self, str):
-        try:
-            return unicode(str)
-        except UnicodeDecodeError:
-            return unicode(str.decode('utf8'))
 
     def iax_conf(self):
         output = StringIO()
@@ -247,13 +143,6 @@ class AsteriskFrontend(Frontend):
             else:
                 print >> output, k + " = ", v
 
-        return output.getvalue()
-
-    def voicemail_conf(self):
-        # XXX there might be a bit too much boilerplate
-        output = StringIO()
-        voicemail_conf = VoicemailConf.new_from_backend(self.backend)
-        voicemail_conf.generate(output)
         return output.getvalue()
 
     def queues_conf(self):
@@ -413,13 +302,6 @@ class AsteriskFrontend(Frontend):
                     print >> options, "rule = %s" % rule
 
         return options.getvalue()
-
-    def extensions_conf(self):
-        output = StringIO()
-        print self.contextsconf
-        extension_conf = ExtensionsConf.new_from_backend(self.backend,self.contextsconf)
-        extension_conf.generate(output)
-        return output.getvalue()
     
     def queuerules_conf(self):
         options = StringIO()
