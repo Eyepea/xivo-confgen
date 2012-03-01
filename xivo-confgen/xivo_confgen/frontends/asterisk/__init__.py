@@ -165,8 +165,10 @@ class AsteriskFrontend(Frontend):
 
             for m in self.backend.queuemembers.all(commented=False, queue_name=q['name']):
                 options.write("member => %s" % m['interface'])
-                if m['penalty'] > 0:
-                    options.write(",%d" % m['penalty'])
+                options.write(",%d" % m['penalty'])
+                options.write(",")
+                options.write(",%s" % m['state_interface'])
+                options.write(",%s" % m['skills'])
                 options.write('\n')
 
         return options.getvalue()
