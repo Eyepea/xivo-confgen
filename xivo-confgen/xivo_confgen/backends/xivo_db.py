@@ -1,6 +1,5 @@
 # -*- coding: utf8 -*-
 
-__author__ = "Guillaume Bour <gbour@proformatique.com>"
 __license__ = """
     Copyright (C) 2010-2011  Avencall
 
@@ -458,8 +457,6 @@ class QObject(object):
         'dundimapping'  : ('dundi_mapping',),
         'dundipeer'     : ('dundi_peer',),
         'general'       : ('general',),
-        'dahdi'         : ('dahdi_general',),
-        'dahdigroup'    : ('dahdi_group',),
     }
 
     def __init__(self, db, name):
@@ -517,4 +514,3 @@ class XivoDBBackend(Backend):
             return QObject._translation[name](self.db, name)
 
         return QObject(self.db, name)
-

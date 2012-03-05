@@ -363,28 +363,3 @@ class AsteriskFrontend(Frontend):
                 print >> options, "%s = %s" % (k, v)
 
         return options.getvalue()
-
-    def chan_dahdi_conf(self):
-        options = StringIO()
-
-        print >> options, "[channels]"
-        for k, v in self.backend.dahdi.get(id=1).iteritems():
-            if v is None or k == 'id':
-                continue
-
-            if isinstance(v, unicode):
-                v = v.encode('utf8')
-            print >> options, k, "=", v
-
-        print >> options
-        for group in self.backend.dahdigroup.all(commented=False):
-            print >> options, "\ngroup=%d" % group['groupno']
-
-            for k in ('context', 'switchtype', 'signalling', 'callerid', 'mailbox'):
-                if group[k] is not None:
-                    print >> options, k, "=", group[k]
-
-            print >> options, "channel => %s" % group['channels']
-
-        return options.getvalue()
-
