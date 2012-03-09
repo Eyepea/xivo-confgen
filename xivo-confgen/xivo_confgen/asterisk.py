@@ -26,11 +26,9 @@ from xivo_confgen.generators.voicemail import VoicemailConf
 
 
 class AsteriskFrontend(object):
-    def __init__(self, backend, **kwargs):
+    def __init__(self, backend):
         self.backend = backend
-
-        for k, v in kwargs.iteritems():
-            setattr(self, k, v)
+        self.contextsconf = None
 
     def sccp_conf(self):
         config_generator = SccpConf.new_from_backend(self.backend)

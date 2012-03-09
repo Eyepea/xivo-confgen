@@ -31,15 +31,14 @@ def backendOpts(config, name):
     return dict(config.items('backend-' + name))
 
 
-def frontendOpts(config, name):
-    if not config.has_section('frontend-' + name):
-        return dict()
-
-    return dict(config.items('frontend-' + name))
-
-
 class Confgen(Protocol):
     def dataReceived(self, data):
+        try:
+            self._write_response(data)
+        finally:
+            self.transport.loseConnection()
+
+    def _write_response(self, data):
         if data[-1] == '\n':
             data = data[:-1]
 
@@ -49,19 +48,17 @@ class Confgen(Protocol):
         try:
             (frontend, callback) = data.split('/')
             callback = callback.replace('.', '_')
-        except:
+        except Exception:
             print "cannot split"
             return
 
-        if frontend not in self.factory.frontends:
-            print "callback not found"
-            return
-
         try:
-            content = getattr(self.factory.frontends[frontend], callback)()
+            content = getattr(self.factory.asterisk_frontend, callback)()
         except Exception, e:
             import traceback
-            print e; traceback.print_exc(file=sys.stdout); content = None
+            print e
+            traceback.print_exc(file=sys.stdout)
+            content = None
 
         if content is None:
             # get cache content
@@ -72,7 +69,6 @@ class Confgen(Protocol):
             self.factory.cache.put(data, content.encode('utf8'))
 
         self.transport.write(content.encode('utf8'))
-        self.transport.loseConnection()
 
 
 class ConfgendFactory(ServerFactory):
@@ -81,7 +77,7 @@ class ConfgendFactory(ServerFactory):
     def __init__(self, backend, cachedir, config):
         backend = getattr(backends, backend)(**backendOpts(config, backend))
 
-        self.frontends = {}
-        self.frontends['asterisk'] = AsteriskFrontend(backend, **frontendOpts(config, 'asterisk'))
+        self.asterisk_frontend = AsteriskFrontend(backend)
+        self.asterisk_frontend.contextsconf = config.get('asterisk', 'contextsconf')
 
         self.cache = cache.FileCache(cachedir)
