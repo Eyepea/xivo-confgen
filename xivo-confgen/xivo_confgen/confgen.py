@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 __license__ = """
-    Copyright (C) 2011  Avencall
+    Copyright (C) 2011-2012  Avencall
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@ __license__ = """
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA..
 """
 
-from twisted.internet.protocol import Protocol, ServerFactory
 import sys
 from xivo_confgen import backends, cache
-from xivo_confgen.frontends import frontends
+from xivo_confgen.asterisk import AsteriskFrontend
+from twisted.internet.protocol import Protocol, ServerFactory
 
 
 def backendOpts(config, name):
@@ -29,6 +29,7 @@ def backendOpts(config, name):
         return dict()
 
     return dict(config.items('backend-' + name))
+
 
 def frontendOpts(config, name):
     if not config.has_section('frontend-' + name):
@@ -49,10 +50,12 @@ class Confgen(Protocol):
             (frontend, callback) = data.split('/')
             callback = callback.replace('.', '_')
         except:
-            print "cannot split"; return
+            print "cannot split"
+            return
 
         if frontend not in self.factory.frontends:
-            print "callback not found"; return
+            print "callback not found"
+            return
 
         try:
             content = getattr(self.factory.frontends[frontend], callback)()
@@ -75,11 +78,10 @@ class Confgen(Protocol):
 class ConfgendFactory(ServerFactory):
     protocol = Confgen
 
-    def __init__(self, frontnames, backend, cachedir, config):
+    def __init__(self, backend, cachedir, config):
         backend = getattr(backends, backend)(**backendOpts(config, backend))
 
         self.frontends = {}
-        for f in frontnames:
-            self.frontends[f] = frontends[f](backend, **frontendOpts(config, f))
+        self.frontends['asterisk'] = AsteriskFrontend(backend, **frontendOpts(config, 'asterisk'))
 
         self.cache = cache.FileCache(cachedir)

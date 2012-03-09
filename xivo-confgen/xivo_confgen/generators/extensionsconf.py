@@ -159,7 +159,7 @@ class ExtensionsConf(object):
                 print >> options, "exten = %s,hint,%s" % hint
 
 
-            # BS filters supervision 
+            # BS filters supervision
             bsfilters = self.backend.bsfilterhints.all(context=ctx['name'])
 
             extens = set(xivo_helpers.speed_dial_key_extension(xfeatures['bsfilter'].get('exten'),

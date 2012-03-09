@@ -21,7 +21,7 @@ __license__ = """
 import unittest
 from StringIO import StringIO
 
-from xivo_confgen.frontends.asterisk.sip import SipConf, gen_value_line, unicodify_string
+from xivo_confgen.generators.sip import SipConf, gen_value_line, unicodify_string
 
 
 class TestSipConf(unittest.TestCase):

@@ -110,7 +110,7 @@ class SipConf(object):
 
             if user['name'] in pickups:
                 p = pickups[user['name']]
-                #WARNING: 
+                #WARNING:
                 # pickupgroup: trappable calls  (xivo members)
                 # callgroup  : can pickup calls (xivo pickups)
                 if 'member' in p:

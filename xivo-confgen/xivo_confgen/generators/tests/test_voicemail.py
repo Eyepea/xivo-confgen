@@ -22,8 +22,8 @@ import os
 import StringIO
 import unittest
 import mock
-from xivo_confgen.frontends.asterisk.voicemail import VoicemailConf
-from xivo_confgen.frontends.asterisk.tests.util import parse_ast_config
+from xivo_confgen.generators.voicemail import VoicemailConf
+from xivo_confgen.generators.tests.util import parse_ast_config
 
 
 class TestVoicemailConf(unittest.TestCase):

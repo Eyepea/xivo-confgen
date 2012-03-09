@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 
 __license__ = """
-    Copyright (C) 2010-2011  Avencall
+    Copyright (C) 2010-2012  Avencall
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,19 +18,20 @@ __license__ = """
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA..
 """
 
-import re
-from xivo import OrderedConf
-from xivo import xivo_helpers
-
 from StringIO import StringIO
-from xivo_confgen.frontend import Frontend
-from xivo_confgen.frontends.asterisk.extensionsconf import ExtensionsConf
-from xivo_confgen.frontends.asterisk.sip import SipConf
-from xivo_confgen.frontends.asterisk.sccp import SccpConf
-from xivo_confgen.frontends.asterisk.voicemail import VoicemailConf
+from xivo_confgen.generators.extensionsconf import ExtensionsConf
+from xivo_confgen.generators.sip import SipConf
+from xivo_confgen.generators.sccp import SccpConf
+from xivo_confgen.generators.voicemail import VoicemailConf
 
 
-class AsteriskFrontend(Frontend):
+class AsteriskFrontend(object):
+    def __init__(self, backend, **kwargs):
+        self.backend = backend
+
+        for k, v in kwargs.iteritems():
+            setattr(self, k, v)
+
     def sccp_conf(self):
         config_generator = SccpConf.new_from_backend(self.backend)
         return self._generate_conf_from_generator(config_generator)
@@ -298,7 +299,7 @@ class AsteriskFrontend(Frontend):
                     print >> options, "rule = %s" % rule
 
         return options.getvalue()
-    
+
     def queuerules_conf(self):
         options = StringIO()
 

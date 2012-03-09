@@ -21,7 +21,7 @@ __license__ = """
 import unittest
 import sys
 
-from xivo_confgen.frontends.asterisk import AsteriskFrontend
+from xivo_confgen.asterisk import AsteriskFrontend
 
 
 class Test(unittest.TestCase):

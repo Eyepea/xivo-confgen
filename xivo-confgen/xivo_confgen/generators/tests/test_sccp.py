@@ -22,8 +22,8 @@ import os
 import StringIO
 import unittest
 import mock
-from xivo_confgen.frontends.asterisk.sccp import SccpConf, _SccpGeneralConf, _SccpLineConf, _SccpDeviceConf
-from xivo_confgen.frontends.asterisk.tests.util import parse_ast_config
+from xivo_confgen.generators.sccp import SccpConf, _SccpGeneralConf, _SccpLineConf, _SccpDeviceConf
+from xivo_confgen.generators.tests.util import parse_ast_config
 
 
 class TestSccpConf(unittest.TestCase):

@@ -19,7 +19,7 @@ __license__ = """
 """
 
 from collections import defaultdict
-from xivo_confgen.frontends.asterisk.util import format_ast_section, \
+from xivo_confgen.generators.util import format_ast_section, \
     format_ast_option, format_ast_object_option, format_none_as_empty
 
 

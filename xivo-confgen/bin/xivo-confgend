@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf8 -*-
+
 import sys, ConfigParser
 
 from twisted.python             import usage
@@ -8,7 +9,6 @@ from twisted.internet.protocol  import Protocol, ServerFactory
 from twisted.application        import service, internet
 
 from xivo_confgen import backends, cache
-from xivo_confgen.frontends import frontends
 from xivo_confgen.confgen import ConfgendFactory
 
 
@@ -17,9 +17,7 @@ class Options(usage.Options):
         ['listen'   , 'l', '*' , 'listen interface (* = all)', str],
         ['port'     , 'p', 5035, 'confgend server port'      , int],
         ['backend'  , 'b', None, 'backend data provider'     , str],
-        ['frontends', 'f', None, 'frontend data generators (comma separated)', str],
         ['cache'    , 'a', '/var/lib/xivo-confgend', 'config cache', str],
-            # configuration file
         ['conf'     , 'c', '/etc/pf-xivo/xivo-confgend.conf', 'Configuration file', str],
     ]
 
@@ -31,7 +29,7 @@ if __name__ == '__main__':
     """
     options.parseOptions()
 
-config = ConfigParser.ConfigParser()
+config = ConfigParser.RawConfigParser()
 config.read(options['conf'])
 
 for key, value in config.items('confgend'):
@@ -55,19 +53,11 @@ if options['backend'] is None:
 elif not hasattr(backends, options['backend']):
     raise Exception("Unknown *%s* backend" % options['backend'])
 
-if options['frontends'] is None:
-    raise Exception("No frontends defined")
-else:
-    options['frontends'] = options['frontends'].split(',')
-    for f in options['frontends']:
-        if f not in frontends:
-            raise Exception("Unknown *%s* frontend" % f)
-
 if options['listen'] == '*':
     options['listen'] = ''
 
 
-f = ConfgendFactory(options['frontends'], options['backend'], options['cache'], config)
+f = ConfgendFactory(options['backend'], options['cache'], config)
 
 if __name__ == '__main__':
     reactor.listenTCP(options['port'], f, interface=options['listen'])

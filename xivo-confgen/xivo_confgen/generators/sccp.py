@@ -18,7 +18,7 @@ __license__ = """
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA..
 """
 
-from xivo_confgen.frontends.asterisk.util import format_ast_section, \
+from xivo_confgen.generators.util import format_ast_section, \
     format_ast_option
 
 
