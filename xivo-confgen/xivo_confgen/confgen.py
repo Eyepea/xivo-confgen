@@ -19,16 +19,10 @@ __license__ = """
 """
 
 import sys
-from xivo_confgen import backends, cache
+from xivo_confgen import cache
 from xivo_confgen.asterisk import AsteriskFrontend
+from xivo_confgen.xivo_db import XivoDBBackend
 from twisted.internet.protocol import Protocol, ServerFactory
-
-
-def backendOpts(config, name):
-    if not config.has_section('backend-' + name):
-        return dict()
-
-    return dict(config.items('backend-' + name))
 
 
 class Confgen(Protocol):
@@ -74,10 +68,16 @@ class Confgen(Protocol):
 class ConfgendFactory(ServerFactory):
     protocol = Confgen
 
-    def __init__(self, backend, cachedir, config):
-        backend = getattr(backends, backend)(**backendOpts(config, backend))
-
-        self.asterisk_frontend = AsteriskFrontend(backend)
-        self.asterisk_frontend.contextsconf = config.get('asterisk', 'contextsconf')
-
+    def __init__(self, cachedir, config):
+        self.asterisk_frontend = self._new_asterisk_frontend(config)
         self.cache = cache.FileCache(cachedir)
+
+    def _new_asterisk_frontend(self, config):
+        backend = self._new_xivo_db_backend(config)
+        asterisk_frontend = AsteriskFrontend(backend)
+        asterisk_frontend.contextsconf = config.get('asterisk', 'contextsconf')
+        return asterisk_frontend
+
+    def _new_xivo_db_backend(self, config):
+        uri = config.get('xivodb', 'uri')
+        return XivoDBBackend(uri)

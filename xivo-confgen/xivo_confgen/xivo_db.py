@@ -1,7 +1,7 @@
 # -*- coding: utf8 -*-
 
 __license__ = """
-    Copyright (C) 2010-2011  Avencall
+    Copyright (C) 2010-2012  Avencall
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,8 +28,6 @@ from sqlalchemy.sql            import select
 from sqlalchemy.types          import VARCHAR
 from sqlalchemy.orm            import scoped_session, sessionmaker
 from sqlalchemy                import exc
-
-from xivo_confgen.backend import Backend
 
 
 def mapped_set(self, key, value):
@@ -500,7 +498,7 @@ class QObject(object):
         return q.filter(and_(*conds)).first()
 
 
-class XivoDBBackend(Backend):
+class XivoDBBackend(object):
     def __init__(self, uri):
         self.db = SqlSoup(uri,
                 session=scoped_session(sessionmaker(autoflush=True, expire_on_commit=False, autocommit=True)))

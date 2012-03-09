@@ -8,7 +8,6 @@ from twisted.internet           import reactor
 from twisted.internet.protocol  import Protocol, ServerFactory
 from twisted.application        import service, internet
 
-from xivo_confgen import backends, cache
 from xivo_confgen.confgen import ConfgendFactory
 
 
@@ -16,7 +15,6 @@ class Options(usage.Options):
     optParameters = [
         ['listen'   , 'l', '*' , 'listen interface (* = all)', str],
         ['port'     , 'p', 5035, 'confgend server port'      , int],
-        ['backend'  , 'b', None, 'backend data provider'     , str],
         ['cache'    , 'a', '/var/lib/xivo-confgend', 'config cache', str],
         ['conf'     , 'c', '/etc/pf-xivo/xivo-confgend.conf', 'Configuration file', str],
     ]
@@ -48,16 +46,11 @@ for key, value in config.items('confgend'):
     if options[key] == options.defaults[key]:
         options[key] = value
 
-if options['backend'] is None:
-    raise Exception("No backend defined")
-elif not hasattr(backends, options['backend']):
-    raise Exception("Unknown *%s* backend" % options['backend'])
-
 if options['listen'] == '*':
     options['listen'] = ''
 
 
-f = ConfgendFactory(options['backend'], options['cache'], config)
+f = ConfgendFactory(options['cache'], config)
 
 if __name__ == '__main__':
     reactor.listenTCP(options['port'], f, interface=options['listen'])
