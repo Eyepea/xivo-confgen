@@ -1,44 +1,42 @@
 #!/usr/bin/python
 # -*- coding: utf8 -*-
 
-import sys, os.path, ConfigParser
-
+import ConfigParser
+import os.path
+import sys
 from twisted.python             import usage
 from twisted.internet           import reactor
 from twisted.internet.protocol  import Protocol, ClientFactory
 
 
 class ConfigGetter(Protocol):
-    #def __init__(self):
-    #   self.timeout = 5
-
     def connectionMade(self):
         self.transport.write(self.factory.key)
 
     def dataReceived(self, data):
-        print data
-        self.transport.loseConnection()
+        sys.stdout.write(data)
+
 
 class ConfigGetterFactory(ClientFactory):
     protocol = ConfigGetter
 
     def __init__(self, key):
         self.key = key
-        self.exit = 0 #exit status
+        self.exit_status = 0
 
     def clientConnectionFailed(self, connector, reason):
-        self.exit = 1
+        self.exit_status = 1
         reactor.stop()
 
     def clientConnectionLost(self, connector, reason):
         reactor.stop()
+
 
 class Options(usage.Options):
     optParameters = [
             ['server' , 's', 'localhost', 'confgend server host/ip', str],
             ['port'   , 'p', 5035       , 'confgend server port', int],
             ['timeout', 't', 5          , 'connexion timeout', int],
-            # configuration file
             ['conf'   , 'c', '/etc/pf-xivo/xivo-confgen.conf', 'Configuration file', str],
     ]
 
@@ -48,18 +46,16 @@ class Options(usage.Options):
     def getSynopsis(self):
         return "Usage: %s [options] frontend/conffile" % os.path.basename(sys.argv[0])
 
-if __name__ == '__main__':
-    """
 
-        NOTE: commandline options overrides config file values
-    """
+def main():
     o = Options()
     try:
         o.parseOptions()
     except usage.UsageError:
-        print o; sys.exit(1)
+        print o
+        sys.exit(1)
 
-    config = ConfigParser.ConfigParser()
+    config = ConfigParser.RawConfigParser()
     config.read(o['conf'])
     for key, value in config.items('confgen'):
         if key not in o.defaults:
@@ -77,9 +73,12 @@ if __name__ == '__main__':
         if o[key] == o.defaults[key]:
             o[key] = value
 
-
-    f = ConfigGetterFactory(o['confkey'])
-    reactor.connectTCP(o['server'], o['port'], f, timeout=o['timeout'])
+    factory = ConfigGetterFactory(o['confkey'])
+    reactor.connectTCP(o['server'], o['port'], factory, timeout=o['timeout'])
     reactor.run()
 
-    sys.exit(f.exit)
+    sys.exit(factory.exit_status)
+
+
+if __name__ == '__main__':
+    main()
