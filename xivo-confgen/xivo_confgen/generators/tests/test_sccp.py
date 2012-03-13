@@ -42,7 +42,7 @@ class TestSccpConf(unittest.TestCase):
         sccp_conf.generate(self._output)
 
         result = self._parse_ast_cfg()
-        expected = { u'general': [], u'device': [], u'line': []}
+        expected = { u'general': [], u'devices': [], u'lines': []}
 
         self.assertEqual(expected, result)
 
@@ -61,8 +61,8 @@ class TestSccpConf(unittest.TestCase):
                    """
         self.assertConfigEqual(expected, self._output.getvalue())
 
-    def test_one_element_line_section(self):
-        sccpline = [{'category': u'line',
+    def test_one_element_lines_section(self):
+        sccpline = [{'category': u'lines',
                      'name': u'100',
                      'cid_name': u'jimmy',
                      'cid_num': u'100'}]
@@ -72,7 +72,7 @@ class TestSccpConf(unittest.TestCase):
 
 
         expected = """\
-                    [line]
+                    [lines]
                     [100]
                     cid_name=jimmy
                     cid_num=100
@@ -82,7 +82,7 @@ class TestSccpConf(unittest.TestCase):
         self.assertConfigEqual(expected, self._output.getvalue())
 
     def test_one_element_device_section(self):
-        sccpdevice = [{'category': u'device',
+        sccpdevice = [{'category': u'devices',
                        'name': u'SEPACA016FDF235',
                        'device': u'SEPACA016FDF235',
                        'line': u'103'}]
@@ -91,7 +91,7 @@ class TestSccpConf(unittest.TestCase):
         sccp_conf.generate(sccpdevice, self._output)
 
         expected = """\
-                    [device]
+                    [devices]
                     [SEPACA016FDF235]
                     device=SEPACA016FDF235
                     line=103
@@ -121,8 +121,8 @@ class TestSccpConf(unittest.TestCase):
                                  u'dateformat = D.M.Y',
                                  u'keepalive = 10',
                                  u'authtimeout = 10'],
-                    u'line': [],
-                    u'device': []}
+                    u'lines': [],
+                    u'devices': []}
 
         self.assertEqual(expected, result)
 

@@ -56,7 +56,7 @@ class _SccpGeneralConf(object):
 
 class _SccpLineConf(object):
     def generate(self, sccpline, output):
-        print >> output, u'[line]'
+        print >> output, u'[lines]'
         for item in sccpline:
             print >> output, format_ast_section(item['name'])
             print >> output, format_ast_option('cid_name', item['cid_name'])
@@ -66,7 +66,7 @@ class _SccpLineConf(object):
 
 class _SccpDeviceConf(object):
     def generate(self, sccpdevice, output):
-        print >> output, u'[device]'
+        print >> output, u'[devices]'
         for item in sccpdevice:
             print >> output, format_ast_section(item['name'])
             print >> output, format_ast_option('device', item['device'])
