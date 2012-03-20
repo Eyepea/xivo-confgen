@@ -71,4 +71,5 @@ class _SccpDeviceConf(object):
             print >> output, format_ast_section(item['name'])
             print >> output, format_ast_option('device', item['device'])
             print >> output, format_ast_option('line', item['line'])
+            print >> output, format_ast_option('voicemail', item['voicemail'])
             print >> output

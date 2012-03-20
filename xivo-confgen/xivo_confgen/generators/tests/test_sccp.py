@@ -85,7 +85,8 @@ class TestSccpConf(unittest.TestCase):
         sccpdevice = [{'category': u'devices',
                        'name': u'SEPACA016FDF235',
                        'device': u'SEPACA016FDF235',
-                       'line': u'103'}]
+                       'line': u'103',
+                       'voicemail': u'103'}]
 
         sccp_conf = _SccpDeviceConf()
         sccp_conf.generate(sccpdevice, self._output)
@@ -95,6 +96,7 @@ class TestSccpConf(unittest.TestCase):
                     [SEPACA016FDF235]
                     device=SEPACA016FDF235
                     line=103
+                    voicemail=103
 
                    """
         self.assertConfigEqual(expected, self._output.getvalue())
