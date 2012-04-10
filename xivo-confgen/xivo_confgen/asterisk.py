@@ -179,6 +179,14 @@ class AsteriskFrontend(object):
         for c in self.backend.agent.all(commented=False, category='general'):
             print >> options, "%s = %s" % (c['var_name'], c['var_val'])
 
+        """
+        persistentagents - This option defines whether the agent`s callback logins have to be
+        stored in the Asterisk`s database are not. If this option is set to yes, the logins
+        will be stored. If it is set to no they won`t be stored. the persistent logins will
+        be reloaded after the Asterisk restart. By default the option is set to yes.
+        """
+        print >> options, "persistentagents = yes"
+
         print >> options, '\n[agents]'
         for c in self.backend.agent.all(commented=False, category='agents'):
             if c['var_val'] is None or c['var_name'] == 'agent':
