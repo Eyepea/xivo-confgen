@@ -1,25 +1,31 @@
 from xivo_confgen.generators.util import format_ast_option
 class AgentsConf(object):
 
-    def __init__(self, general, agents):
+    def __init__(self, general, agent_global_params, agents):
         self._general = general
+        self._agent_global_params = agent_global_params
         self._agents = agents
 
 
     def generate(self, output):
         self._generate_general(output)
+        self._generate_agent_global_params(output)
         self._generate_agents(output)
 
     def _generate_general(self, output):
         print >> output, u'[general]'
         for item in self._general:
-            print >> output, format_ast_option(item['var_name'], item['var_val'])
+            print >> output, format_ast_option(item['option_name'], item['option_value'])
+        print >> output
+
+    def _generate_agent_global_params(self, output):
+        print >> output, u'[agents]'
+        for item in self._agent_global_params:
+            print >> output, format_ast_option(item['option_name'], item['option_value'])
         print >> output
 
     def _generate_agents(self, output):
         agent_options = ['autologoff', 'ackcall', 'acceptdtmf', 'enddtmf', 'wrapuptime', 'musiconhold']
-        print >> output, u'[agents]'
-        print >> output
         for agent in self._agents:
             for option in agent_options:
                 print >> output, format_ast_option(option, agent[option])
@@ -31,9 +37,10 @@ class AgentsConf(object):
 
     @classmethod
     def new_from_backend(cls, backend):
-        general = backend.agent.all(commented=False, category='general')
+        general = backend.agentglobalparams.all(category='general')
+        agent_global_params = backend.agentglobalparams.all(category='agents')
         agents = backend.agentfeatures.all(commented=False)
-        return cls(general, agents)
+        return cls(general, agent_global_params, agents)
 
 
 

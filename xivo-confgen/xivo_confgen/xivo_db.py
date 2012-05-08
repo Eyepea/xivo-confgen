@@ -427,7 +427,7 @@ class QObject(object):
         'iax'           : ('staticiax',),
         'voicemail'     : ('staticvoicemail',),
         'queue'         : ('staticqueue',),
-        'agent'         : ('staticagent',),
+        'agentglobalparams' : ('agentglobalparams',),
         'agentfeatures' : ('agentfeatures',),
         'meetme'        : ('staticmeetme',),
         'musiconhold'   : ('musiconhold',),

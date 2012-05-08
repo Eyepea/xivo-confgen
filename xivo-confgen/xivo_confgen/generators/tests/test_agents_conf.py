@@ -19,31 +19,51 @@ class TestAgents(unittest.TestCase):
     generate_general = Mock()
 
     @patch.object(AgentsConf, '_generate_general')
+    @patch.object(AgentsConf, '_generate_agent_global_params')
     @patch.object(AgentsConf, '_generate_agents')
-    def testGenerate(self, generate_general, generate_agents):
+    def testGenerate(self, generate_general, generate_agent_global_params, generate_agents):
 
-        agents_conf = AgentsConf([], [])
+        agents_conf = AgentsConf([], [], [])
 
         agents_conf.generate(self._output)
 
         generate_general.assert_called_with(self._output)
+        generate_agent_global_params.assert_called_with(self._output)
         generate_agents.assert_called_with(self._output)
 
     def test_general_section(self):
 
         agent_general_db = [{'category': u'general',
-                        'var_name': u'multiplelogin',
-                        'var_val': u'yes'},
+                        'option_name': u'multiplelogin',
+                        'option_value': u'yes'},
                             ]
         expected = """\
                     [general]
                     multiplelogin = yes
-                    
+
                    """
 
-        agents_conf = AgentsConf(agent_general_db, [])
+        agents_conf = AgentsConf(agent_general_db, [], [])
 
         agents_conf._generate_general(self._output)
+
+        self.assertConfigEqual(expected, self._output.getvalue())
+
+    def test_agent_global_params(self):
+        agent_global_params_db = [{'category': u'agents', 'option_name': u'recordagentcalls', 'option_value': u'no'},
+                            {'category': u'agents', 'option_name': u'endcall', 'option_value': u'yes'},
+                            ]
+
+        expected = """\
+                    [agents]
+                    recordagentcalls = no
+                    endcall = yes
+
+                   """
+
+        agents_conf = AgentsConf([], agent_global_params_db, [])
+
+        agents_conf._generate_agent_global_params(self._output)
 
         self.assertConfigEqual(expected, self._output.getvalue())
 
@@ -55,8 +75,6 @@ class TestAgents(unittest.TestCase):
                      'autologoff':u'0', 'ackcall':u'no', 'acceptdtmf':u'#', 'enddtmf':u'*', 'wrapuptime':u'50000', 'musiconhold':u'classic'}, ]
 
         expected = """\
-                    [agents]
-                    
                     autologoff = 0
                     ackcall = no
                     acceptdtmf = #
@@ -64,7 +82,7 @@ class TestAgents(unittest.TestCase):
                     wrapuptime = 30000
                     musiconhold = default
                     agent => 3456,0022,John Wayne
-                    
+
                     autologoff = 0
                     ackcall = no
                     acceptdtmf = #
@@ -72,9 +90,9 @@ class TestAgents(unittest.TestCase):
                     wrapuptime = 50000
                     musiconhold = classic
                     agent => 7766,,Alfred Bourne
-                    
+
                    """
-        agents_conf = AgentsConf([], agent_db)
+        agents_conf = AgentsConf([], [], agent_db)
 
         agents_conf._generate_agents(self._output)
 
