@@ -66,7 +66,7 @@ class TestSccpConf(unittest.TestCase):
                      'name': u'100',
                      'cid_name': u'jimmy',
                      'cid_num': u'100',
-                     'iduserfeatures': u'1'}]
+                     'user_id': u'1'}]
 
         sccp_conf = _SccpLineConf()
         sccp_conf.generate(sccpline, self._output)

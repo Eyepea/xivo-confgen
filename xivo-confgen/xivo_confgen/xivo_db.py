@@ -167,7 +167,8 @@ class SccpLineHandler(SpecializedHandler):
         linefeatures = self.db.linefeatures._table
 
         query = select(
-            [sccpline.c.name, sccpline.c.cid_name, sccpline.c.cid_num, linefeatures.c.iduserfeatures],
+            [sccpline.c.name, sccpline.c.cid_name, sccpline.c.cid_num,
+             linefeatures.c.iduserfeatures.label('user_id')],
             and_(linefeatures.c.protocol == 'sccp', linefeatures.c.protocolid == sccpline.c.id)
         )
 
