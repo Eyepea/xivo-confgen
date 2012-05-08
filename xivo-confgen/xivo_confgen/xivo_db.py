@@ -165,11 +165,15 @@ class SccpLineHandler(SpecializedHandler):
     def all(self, *args, **kwargs):
         sccpline = self.db.sccpline._table
         linefeatures = self.db.linefeatures._table
+        userfeatures = self.db.userfeatures._table
 
         query = select(
             [sccpline.c.name, sccpline.c.cid_name, sccpline.c.cid_num,
-             linefeatures.c.iduserfeatures.label('user_id')],
-            and_(linefeatures.c.protocol == 'sccp', linefeatures.c.protocolid == sccpline.c.id)
+             linefeatures.c.iduserfeatures.label('user_id'),
+             userfeatures.c.language],
+            and_(linefeatures.c.protocol == 'sccp',
+                 linefeatures.c.protocolid == sccpline.c.id,
+                 linefeatures.c.iduserfeatures == userfeatures.c.id)
         )
 
         return self.execute(query).fetchall()

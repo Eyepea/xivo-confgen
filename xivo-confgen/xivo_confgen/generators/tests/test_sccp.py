@@ -35,7 +35,7 @@ class TestSccpConf(unittest.TestCase):
         return parse_ast_config(self._output)
 
     def assertConfigEqual(self, configExpected, configResult):
-        self.assertEqual(configExpected.replace(' ',''), configResult.replace(' ',''))
+        self.assertEqual(configExpected.replace(' ', ''), configResult.replace(' ', ''))
 
     def test_empty_sections(self):
         sccp_conf = SccpConf([], [], [])
@@ -66,7 +66,8 @@ class TestSccpConf(unittest.TestCase):
                      'name': u'100',
                      'cid_name': u'jimmy',
                      'cid_num': u'100',
-                     'user_id': u'1'}]
+                     'user_id': u'1',
+                     'language': u'fr_FR'}]
 
         sccp_conf = _SccpLineConf()
         sccp_conf.generate(sccpline, self._output)
@@ -78,9 +79,17 @@ class TestSccpConf(unittest.TestCase):
                     cid_name=jimmy
                     cid_num=100
                     setvar=XIVO_USERID=1
+                    language=fr_FR
 
                    """
         self.assertConfigEqual(expected, self._output.getvalue())
+
+    def test_format_language_when_empty(self):
+        sccp_conf = _SccpLineConf()
+
+        language = sccp_conf._format_language(u'')
+
+        self.assertEqual(u'en_US', language)
 
     def test_one_element_devices_section(self):
         sccpdevice = [{'category': u'devices',
@@ -101,7 +110,7 @@ class TestSccpConf(unittest.TestCase):
 
                    """
         self.assertConfigEqual(expected, self._output.getvalue())
-   
+
     def test_general_section(self):
         sccp = [{'category': u'general',
                  'option_name': u'bindaddr',
