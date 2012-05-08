@@ -414,6 +414,7 @@ class QObject(object):
         'voicemail'     : ('staticvoicemail',),
         'queue'         : ('staticqueue',),
         'agent'         : ('staticagent',),
+        'agentfeatures' : ('agentfeatures',),
         'meetme'        : ('staticmeetme',),
         'musiconhold'   : ('musiconhold',),
         'features'     	: ('features',),

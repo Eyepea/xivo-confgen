@@ -23,6 +23,7 @@ from xivo_confgen.generators.extensionsconf import ExtensionsConf
 from xivo_confgen.generators.sip import SipConf
 from xivo_confgen.generators.sccp import SccpConf
 from xivo_confgen.generators.voicemail import VoicemailConf
+from xivo_confgen.generators.agents_conf import AgentsConf
 
 
 class AsteriskFrontend(object):
@@ -49,6 +50,10 @@ class AsteriskFrontend(object):
 
     def extensions_conf(self):
         config_generator = ExtensionsConf.new_from_backend(self.backend, self.contextsconf)
+        return self._generate_conf_from_generator(config_generator)
+
+    def newagents_conf(self):
+        config_generator = AgentsConf.new_from_backend(self.backend)
         return self._generate_conf_from_generator(config_generator)
 
     def iax_conf(self):
