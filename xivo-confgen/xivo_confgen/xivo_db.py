@@ -161,6 +161,19 @@ class AgentQueueskillsHandler(SpecializedHandler):
         return self.execute(q).fetchall()
 
 
+class SccpLineHandler(SpecializedHandler):
+    def all(self, *args, **kwargs):
+        sccpline = self.db.sccpline._table
+        linefeatures = self.db.linefeatures._table
+
+        query = select(
+            [sccpline.c.name, sccpline.c.cid_name, sccpline.c.cid_num, linefeatures.c.iduserfeatures],
+            and_(linefeatures.c.protocol == 'sccp', linefeatures.c.protocolid == sccpline.c.id)
+        )
+
+        return self.execute(query).fetchall()
+
+
 class ExtenumbersHandler(SpecializedHandler):
     def all(self, features=[], *args, **kwargs):
         #NOTE: sqlalchemy 4: table, 5: _table
@@ -407,7 +420,7 @@ class TrunksHandler(SpecializedHandler):
 class QObject(object):
     _translation = {
         'sccpgeneral'   : ('sccpgeneral',),
-        'sccpline'      : ('sccpline',),
+        'sccpline'      : SccpLineHandler,
         'sccpdevice'    : ('sccpdevice',),
         'sip'           : ('staticsip',),
         'iax'           : ('staticiax',),

@@ -65,7 +65,8 @@ class TestSccpConf(unittest.TestCase):
         sccpline = [{'category': u'lines',
                      'name': u'100',
                      'cid_name': u'jimmy',
-                     'cid_num': u'100'}]
+                     'cid_num': u'100',
+                     'iduserfeatures': u'1'}]
 
         sccp_conf = _SccpLineConf()
         sccp_conf.generate(sccpline, self._output)
@@ -76,12 +77,12 @@ class TestSccpConf(unittest.TestCase):
                     [100]
                     cid_name=jimmy
                     cid_num=100
+                    setvar=XIVO_USERID=1
 
                    """
-
         self.assertConfigEqual(expected, self._output.getvalue())
 
-    def test_one_element_device_section(self):
+    def test_one_element_devices_section(self):
         sccpdevice = [{'category': u'devices',
                        'name': u'SEPACA016FDF235',
                        'device': u'SEPACA016FDF235',
