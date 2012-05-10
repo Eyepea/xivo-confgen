@@ -52,7 +52,7 @@ class AsteriskFrontend(object):
         config_generator = ExtensionsConf.new_from_backend(self.backend, self.contextsconf)
         return self._generate_conf_from_generator(config_generator)
 
-    def newagents_conf(self):
+    def agents_conf(self):
         config_generator = AgentsConf.new_from_backend(self.backend)
         return self._generate_conf_from_generator(config_generator)
 
@@ -174,40 +174,6 @@ class AsteriskFrontend(object):
                 options.write(",%s" % m['state_interface'])
                 options.write(",%s" % m['skills'])
                 options.write('\n')
-
-        return options.getvalue()
-
-    def agents_conf(self):
-        options = StringIO()
-
-        print >> options, '\n[general]'
-        for c in self.backend.agent.all(commented=False, category='general'):
-            print >> options, "%s = %s" % (c['var_name'], c['var_val'])
-
-        """
-        persistentagents - This option defines whether the agent`s callback logins have to be
-        stored in the Asterisk`s database are not. If this option is set to yes, the logins
-        will be stored. If it is set to no they won`t be stored. the persistent logins will
-        be reloaded after the Asterisk restart. By default the option is set to yes.
-        """
-        print >> options, "persistentagents = yes"
-
-        print >> options, '\n[agents]'
-        for c in self.backend.agent.all(commented=False, category='agents'):
-            if c['var_val'] is None or c['var_name'] == 'agent':
-                continue
-
-            print >> options, "%s = %s" % (c['var_name'], c['var_val'])
-
-        print >> options, ''
-        for a in self.backend.agentusers.all(commented=False):
-            for k, v in a.items():
-                if k == 'var_val':
-                    continue
-
-                print >> options, "%s = %s" % (k, v)
-
-            print >> options, "agent =>", a['var_val'], "\n"
 
         return options.getvalue()
 

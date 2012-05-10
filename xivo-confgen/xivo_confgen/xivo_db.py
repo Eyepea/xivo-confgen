@@ -443,7 +443,6 @@ class QObject(object):
 
         'sipusers'      : ('usersip', {'category': 'user'}),
         'iaxusers'      : ('useriax', {'category': 'user'}),
-        'agentusers'    : AgentUsersHandler,
 
         'trunks'        : TrunksHandler,
         'siptrunks'     : ('usersip', {'category': 'trunk'}),
