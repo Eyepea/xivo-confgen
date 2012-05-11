@@ -223,7 +223,7 @@ class PhonefunckeysHandler(SpecializedHandler):
             _l.c.iduserfeatures == _p.c.iduserfeatures,
             _p.c.typeextenumbers == None,
             _p.c.typevalextenumbers == None,
-            _p.c.typeextenumbersright.in_(('user', 'group', 'queue', 'meetme')),
+            _p.c.typeextenumbersright.in_(('group', 'queue', 'meetme')),
             _p.c.supervision == 1,
         ]
         if 'context' in kwargs:
