@@ -242,6 +242,7 @@ class PhonefunckeysHandler(SpecializedHandler):
 
 
 class BSFilterHintsHandler(SpecializedHandler):
+
     def all(self, *args, **kwargs):
         # get all supervised bsfilters
         (_u, _p, _e, _l) = [getattr(self.db, options)._table for options in
@@ -251,6 +252,7 @@ class BSFilterHintsHandler(SpecializedHandler):
 
         conds = [
             _l.c.iduserfeatures == _p.c.iduserfeatures,
+            _u.c.id == _l.c.iduserfeatures,
             _p.c.typeextenumbers == 'extenfeatures',
             _p.c.typevalextenumbers == 'bsfilter',
             _p.c.typeextenumbersright == 'user',
@@ -262,9 +264,7 @@ class BSFilterHintsHandler(SpecializedHandler):
         ]
         if 'context' in kwargs:
             conds.append(_l.c.context == kwargs['context'])
-
-        q = select([_e.c.exten, _l.c.number], 	and_(*conds))
-
+        q = select([_e.c.exten, _l.c.number, _u.c.bsfilter], 	and_(*conds))
         return self.execute(q).fetchall()
 
 

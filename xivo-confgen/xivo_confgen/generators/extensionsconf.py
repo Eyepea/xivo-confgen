@@ -158,18 +158,18 @@ class ExtensionsConf(object):
             for hint in xset:
                 print >> options, "exten = %s,hint,%s" % hint
 
-
             # BS filters supervision
             bsfilters = self.backend.bsfilterhints.all(context=ctx['name'])
 
+            numbers = self._build_sorted_bsfilter(bsfilters)
+
             extens = set(xivo_helpers.speed_dial_key_extension(xfeatures['bsfilter'].get('exten'),
-                r['exten'], None, r['number'], True) for r in bsfilters)
+                boss, None, secretary, True) for boss, secretary in numbers)
 
             if len(extens) > 0:
                 print >> options, "\n; BS filters supervision"
             for exten in extens:
                 print >> options, "exten = %s,hint,Custom:%s" % (exten, exten)
-
 
             # prog funckeys supervision
             progfunckeys = self.backend.progfunckeys.all(context=ctx['name'])
@@ -243,6 +243,19 @@ class ExtensionsConf(object):
                 print >> output, "exten = %s,%s,%s(%s)" % \
                             (act['exten'], act['priority'], act['app'], act['appdata'].replace('|', ','))
             print >> output
+
+    @staticmethod
+    def _build_sorted_bsfilter(query_result):
+        numbers = []
+        for bsfilter in query_result:
+            if bsfilter['bsfilter'] == 'secretary':
+                boss, secretary = bsfilter['exten'], bsfilter['number']
+            elif bsfilter['bsfilter'] == 'boss':
+                boss, secretary = bsfilter['number'], bsfilter['exten']
+            else:
+                pass
+            numbers.append((boss, secretary))
+        return set(numbers)
 
     @classmethod
     def new_from_backend(cls, backend, contextconfs):

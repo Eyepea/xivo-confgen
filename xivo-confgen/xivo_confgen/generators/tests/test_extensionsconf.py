@@ -64,3 +64,51 @@ class TestExtensionsConf(unittest.TestCase):
                                         exten=2300,1,GoSub(endcall,s,1(hangup))
                                         
                                         """, output.getvalue())
+
+    def test_bsfilter_build_extens(self):
+        bs1 = {'bsfilter': 'boss',
+               'exten': 1001,
+               'number': 1000}
+        query_result = [bs1]
+
+        result = self.extensionsconf._build_sorted_bsfilter(query_result)
+
+        expected = set([(1000, 1001)])
+
+        self.assertEqual(result, expected)
+
+    def test_bsfilter_build_extend_no_double(self):
+        bs1 = {'bsfilter': 'boss',
+               'exten': 1001,
+               'number': 1000}
+        bs2 = {'bsfilter': 'secretary',
+               'exten': 1000,
+               'number': 1001}
+        query_result = [bs1, bs2]
+
+        result = self.extensionsconf._build_sorted_bsfilter(query_result)
+
+        expected = set([(1000, 1001)])
+
+        self.assertEqual(result, expected)
+
+    def test_bsfilter_build_extend_no_two_secretaries(self):
+        bs1 = {'bsfilter': 'boss',
+               'exten': 1001,
+               'number': 1000}
+        bs2 = {'bsfilter': 'secretary',
+               'exten': 1000,
+               'number': 1001}
+        bs3 = {'bsfilter': 'boss',
+               'exten': 1002,
+               'number': 1000}
+        bs4 = {'bsfilter': 'secretary',
+               'exten': 1000,
+               'number': 1002}
+        query_result = [bs1, bs2, bs3, bs4]
+
+        result = self.extensionsconf._build_sorted_bsfilter(query_result)
+
+        expected = set([(1000, 1001), (1000, 1002)])
+
+        self.assertEqual(result, expected)
