@@ -50,7 +50,7 @@ class _SccpGeneralConf(object):
     def generate(self, sccpgeneral, output):
         print >> output, u'[general]'
         for item in sccpgeneral:
-            print >> output, format_ast_option(item['option_name'], item['value'])
+            print >> output, format_ast_option(item['name'], item['value'])
         print >> output
 
 

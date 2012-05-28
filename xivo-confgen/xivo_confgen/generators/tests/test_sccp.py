@@ -47,8 +47,7 @@ class TestSccpConf(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_one_element_general_section(self):
-        sccpgeneral = [{'category': u'general',
-                        'option_name': u'foo',
+        sccpgeneral = [{'name': u'foo',
                         'value': u'bar'}]
 
         sccp_conf = _SccpGeneralConf()
@@ -112,17 +111,13 @@ class TestSccpConf(unittest.TestCase):
         self.assertConfigEqual(expected, self._output.getvalue())
 
     def test_general_section(self):
-        sccp = [{'category': u'general',
-                 'option_name': u'bindaddr',
+        sccp = [{'name': u'bindaddr',
                  'value': u'0.0.0.0'},
-                {'category': u'general',
-                 'option_name': u'dateformat',
+                {'name': u'dateformat',
                  'value': u'D.M.Y'},
-                {'category': u'general',
-                 'option_name': u'keepalive',
+                {'name': u'keepalive',
                  'value': u'10'},
-                {'category': u'general',
-                 'option_name': u'authtimeout',
+                {'name': u'authtimeout',
                  'value': u'10'}]
 
         sccp_conf = SccpConf(sccp, [], [])
