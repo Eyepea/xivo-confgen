@@ -71,7 +71,7 @@ class SipConf(object):
                 if isinstance(v, unicode):
                     v = v.encode('utf8')
 
-                if v == 'allow':
+                if k == 'allow':
                     print >> output, "disallow = all"
                     for c in v.split(','):
                         print >> output, "allow = " + str(c)
