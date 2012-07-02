@@ -107,6 +107,9 @@ class SipConf(object):
                 if key == 'subscribemwi' :
                     value = 'no' if value == 0 else 'yes'
                     print >> output, gen_value_line('subscribemwi', value)
+		
+		print >> output, "cc_agent_policy = generic"
+		print >> output, "cc_monitor_policy = generic"
 
             if user['name'] in pickups:
                 p = pickups[user['name']]
